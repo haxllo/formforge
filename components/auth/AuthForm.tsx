@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,13 +10,40 @@ import { toast } from 'sonner';
 
 interface AuthFormProps {
   redirectTo?: string;
+  error?: string;
+  errorDescription?: string;
 }
 
-export function AuthForm({ redirectTo }: AuthFormProps) {
+export function AuthForm({ redirectTo, error, errorDescription }: AuthFormProps) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const supabase = createClient();
+
+  // Show error message if present (from query params or hash fragment)
+  useEffect(() => {
+    // Check for error in URL hash (Supabase sends errors in hash)
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const hashError = hashParams.get('error') || error;
+    const hashErrorDescription = hashParams.get('error_description') || errorDescription;
+    
+    if (hashError) {
+      let errorMessage = 'Authentication failed. Please try again.';
+      
+      if (hashError === 'otp_expired' || hashError === 'access_denied' || hashError === 'expired_token') {
+        errorMessage = hashErrorDescription || 'The magic link has expired or is invalid. Please request a new one.';
+      } else if (hashErrorDescription) {
+        errorMessage = hashErrorDescription.replace(/\+/g, ' ');
+      }
+      
+      toast.error(errorMessage, { duration: 6000 });
+      
+      // Clean up the hash from URL
+      if (window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    }
+  }, [error, errorDescription]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

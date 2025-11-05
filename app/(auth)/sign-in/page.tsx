@@ -5,7 +5,7 @@ import { AuthForm } from '@/components/auth/AuthForm';
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: { redirect?: string };
+  searchParams: { redirect?: string; error?: string; error_description?: string };
 }) {
   const supabase = await createClientSupabase();
   const {
@@ -25,7 +25,7 @@ export default async function SignInPage({
             Sign in to your account to get started
           </p>
         </div>
-        <AuthForm redirectTo={searchParams.redirect} />
+        <AuthForm redirectTo={searchParams.redirect} error={searchParams.error} errorDescription={searchParams.error_description} />
       </div>
     </div>
   );
