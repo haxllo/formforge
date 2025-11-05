@@ -183,7 +183,7 @@ function FieldPreview({ field }: { field: FormField }) {
     case 'rating':
       return (
         <div className="flex gap-2">
-          {Array.from({ length: field.config?.maxRating || 5 }, (_, i) => (
+          {Array.from({ length: typeof field.config?.maxRating === 'number' ? field.config.maxRating : 5 }, (_, i) => (
             <span key={i} className="text-2xl text-gray-300">★</span>
           ))}
         </div>

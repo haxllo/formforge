@@ -156,7 +156,7 @@ export function FieldSettings() {
                   <Input
                     id="min"
                     type="number"
-                    value={field.config.min || ''}
+                    value={field.config.min !== undefined ? String(field.config.min) : ''}
                     onChange={(e) =>
                       handleUpdate({
                         config: {
@@ -173,7 +173,7 @@ export function FieldSettings() {
                   <Input
                     id="max"
                     type="number"
-                    value={field.config.max || ''}
+                    value={field.config.max !== undefined ? String(field.config.max) : ''}
                     onChange={(e) =>
                       handleUpdate({
                         config: {
@@ -198,7 +198,7 @@ export function FieldSettings() {
               <Input
                 id="maxRating"
                 type="number"
-                value={field.config.maxRating || 5}
+                value={String(field.config.maxRating ?? 5)}
                 onChange={(e) =>
                   handleUpdate({
                     config: {
@@ -221,7 +221,7 @@ export function FieldSettings() {
               <Label htmlFor="fileTypes">Allowed File Types</Label>
               <Input
                 id="fileTypes"
-                value={field.config.fileTypes || ''}
+                value={typeof field.config.fileTypes === 'string' ? field.config.fileTypes : ''}
                 onChange={(e) =>
                   handleUpdate({
                     config: { ...field.config, fileTypes: e.target.value },
@@ -233,7 +233,7 @@ export function FieldSettings() {
               <Input
                 id="maxFileSize"
                 type="number"
-                value={field.config.maxFileSize || ''}
+                value={field.config.maxFileSize !== undefined ? String(field.config.maxFileSize) : ''}
                 onChange={(e) =>
                   handleUpdate({
                     config: {

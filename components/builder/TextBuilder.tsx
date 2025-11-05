@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Info } from 'lucide-react';
+import type { FormField } from '@/lib/types';
 
 interface TextBuilderProps {
   formId: string;
@@ -89,13 +90,13 @@ export function TextBuilder({ formId }: TextBuilderProps) {
       // Convert to FormField format
       const formFields = parsedFields.map((field, index) => ({
         id: `field-${Date.now()}-${index}`,
-        type: field.type as any,
+        type: field.type as FormField['type'],
         label: field.label,
         order: index,
         config: {
-          required: field.config.required || false,
           ...field.config,
-        },
+          required: typeof field.config.required === 'boolean' ? field.config.required : false,
+        } as FormField['config'],
       }));
       
       setFields(formFields);
@@ -114,7 +115,7 @@ export function TextBuilder({ formId }: TextBuilderProps) {
     // Add new fields
     parsedFields.forEach((field, index) => {
       setTimeout(() => {
-        addField(field.type as any, index);
+        addField(field.type as FormField['type'], index);
       }, index * 50);
     });
   };

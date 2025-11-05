@@ -20,20 +20,27 @@ export function createSubmissionSchema(fields: FormFieldDB[]) {
         fieldSchema = z.union([z.number(), z.string()]).transform((val) => {
           if (typeof val === 'string') {
             const num = Number(val);
-            return isNaN(num) ? val : num;
+            if (isNaN(num)) {
+              throw new z.ZodError([{
+                code: 'custom',
+                message: 'Please enter a valid number',
+                path: [],
+              }]);
+            }
+            return num;
           }
           return val;
-        }).pipe(z.number({
-          invalid_type_error: 'Please enter a valid number',
-        }));
-        if (field.config?.min !== undefined) {
-          fieldSchema = fieldSchema.refine((val) => val >= field.config!.min!, {
-            message: `Value must be at least ${field.config.min}`,
+        }).pipe(z.number());
+        const minValue = typeof field.config?.min === 'number' ? field.config.min : undefined;
+        const maxValue = typeof field.config?.max === 'number' ? field.config.max : undefined;
+        if (minValue !== undefined) {
+          fieldSchema = fieldSchema.refine((val) => (val as number) >= minValue, {
+            message: `Value must be at least ${minValue}`,
           });
         }
-        if (field.config?.max !== undefined) {
-          fieldSchema = fieldSchema.refine((val) => val <= field.config!.max!, {
-            message: `Value must be at most ${field.config.max}`,
+        if (maxValue !== undefined) {
+          fieldSchema = fieldSchema.refine((val) => (val as number) <= maxValue, {
+            message: `Value must be at most ${maxValue}`,
           });
         }
         break;
@@ -50,13 +57,14 @@ export function createSubmissionSchema(fields: FormFieldDB[]) {
         fieldSchema = z.string();
         break;
       case 'rating':
+        const maxRating = typeof field.config?.maxRating === 'number' ? field.config.maxRating : 5;
         fieldSchema = z.union([z.number(), z.string()]).transform((val) => {
           if (typeof val === 'string') {
             const num = Number(val);
             return isNaN(num) ? 0 : num;
           }
           return val;
-        }).pipe(z.number().int().min(1).max(field.config?.maxRating || 5));
+        }).pipe(z.number().int().min(1).max(maxRating));
         break;
       case 'file':
         fieldSchema = z.any().optional(); // File handling will be done separately

@@ -257,8 +257,8 @@ export function PublicFormRenderer({ form, fields }: PublicFormRendererProps) {
                 type="number"
                 {...register(fieldKey, {
                   valueAsNumber: true,
-                  min: field.config?.min,
-                  max: field.config?.max,
+                  min: typeof field.config?.min === 'number' ? field.config.min : undefined,
+                  max: typeof field.config?.max === 'number' ? field.config.max : undefined,
                 })}
                 placeholder={field.placeholder || 'Enter number...'}
                 className={error ? 'border-red-500' : ''}
@@ -311,7 +311,7 @@ export function PublicFormRenderer({ form, fields }: PublicFormRendererProps) {
 
             {field.field_type === 'rating' && (
               <div className="flex gap-2">
-                {Array.from({ length: field.config?.maxRating || 5 }, (_, i) => i + 1).map((star) => {
+                {Array.from({ length: typeof field.config?.maxRating === 'number' ? field.config.maxRating : 5 }, (_, i) => i + 1).map((star) => {
                   const currentValue = watch(fieldKey);
                   const rating = typeof currentValue === 'number' ? currentValue : 0;
                   return (
@@ -333,7 +333,7 @@ export function PublicFormRenderer({ form, fields }: PublicFormRendererProps) {
                 id={fieldKey}
                 type="file"
                 {...register(fieldKey)}
-                accept={field.config?.fileTypes || '*'}
+                accept={typeof field.config?.fileTypes === 'string' ? field.config.fileTypes : '*'}
                 className={error ? 'border-red-500' : ''}
               />
             )}
