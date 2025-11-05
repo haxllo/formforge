@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export function FormSettings() {
   const formTitle = useBuilderStore((state) => state.formTitle);
@@ -65,6 +66,59 @@ export function FormSettings() {
           />
           <p className="text-xs text-gray-500">
             Redirect users to this URL after submission
+          </p>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-3">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="webhook-enabled"
+              checked={formSettings.webhookEnabled || false}
+              onCheckedChange={(checked) =>
+                setFormSettings({ webhookEnabled: checked === true })
+              }
+            />
+            <Label htmlFor="webhook-enabled" className="cursor-pointer">
+              Enable Webhook
+            </Label>
+          </div>
+          {formSettings.webhookEnabled && (
+            <div className="space-y-2">
+              <Label htmlFor="webhook-url">Webhook URL</Label>
+              <Input
+                id="webhook-url"
+                type="url"
+                value={formSettings.webhookUrl || ''}
+                onChange={(e) => setFormSettings({ webhookUrl: e.target.value })}
+                placeholder="https://api.example.com/webhook"
+              />
+              <p className="text-xs text-gray-500">
+                POST requests will be sent to this URL when a form is submitted
+              </p>
+            </div>
+          )}
+        </div>
+
+        <Separator />
+
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold">Spam Protection</Label>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="honeypot-enabled"
+              checked={formSettings.enableHoneypot || false}
+              onCheckedChange={(checked) =>
+                setFormSettings({ enableHoneypot: checked === true })
+              }
+            />
+            <Label htmlFor="honeypot-enabled" className="cursor-pointer">
+              Enable Honeypot (Basic spam protection)
+            </Label>
+          </div>
+          <p className="text-xs text-gray-500">
+            Adds a hidden field to catch spam bots
           </p>
         </div>
       </div>

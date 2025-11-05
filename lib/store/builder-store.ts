@@ -9,6 +9,9 @@ interface BuilderState {
   formSettings: {
     thankYouMessage?: string;
     redirectUrl?: string;
+    webhookUrl?: string;
+    webhookEnabled?: boolean;
+    enableHoneypot?: boolean;
   };
   isPreviewMode: boolean;
   lastSaved: Date | null;
@@ -38,6 +41,7 @@ const initialState = {
   formDescription: '',
   formSettings: {
     thankYouMessage: 'Thank you for your submission!',
+    webhookEnabled: false,
   },
   isPreviewMode: false,
   lastSaved: null,
@@ -54,15 +58,23 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   addField: (type, order) => {
     const fields = get().fields;
     const newOrder = order !== undefined ? order : fields.length;
+    const defaultConfig: FormField['config'] = {
+      required: false,
+    };
+    
+    if (type === 'radio' || type === 'checkbox' || type === 'dropdown') {
+      defaultConfig.options = ['Option 1'];
+    }
+    if (type === 'rating') {
+      defaultConfig.maxRating = 5;
+    }
+    
     const newField: FormField = {
       id: `field-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       type,
       label: getDefaultLabel(type),
       order: newOrder,
-      config: {
-        required: false,
-        ...(type === 'radio' || type === 'checkbox' ? { options: ['Option 1'] } : {}),
-      },
+      config: defaultConfig,
     };
 
     // Adjust order of existing fields if needed
@@ -189,10 +201,24 @@ function getDefaultLabel(type: FieldType): string {
       return 'Long Text';
     case 'email':
       return 'Email';
+    case 'number':
+      return 'Number';
+    case 'phone':
+      return 'Phone';
+    case 'url':
+      return 'URL';
+    case 'date':
+      return 'Date';
     case 'checkbox':
       return 'Checkbox';
     case 'radio':
       return 'Radio';
+    case 'dropdown':
+      return 'Dropdown';
+    case 'rating':
+      return 'Rating';
+    case 'file':
+      return 'File Upload';
     case 'divider':
       return 'Divider';
     default:

@@ -7,8 +7,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Trash2, Plus } from 'lucide-react';
-import type { FormField } from '@/lib/types';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Trash2, Plus, X } from 'lucide-react';
+import type { FormField, FieldCondition, ConditionOperator } from '@/lib/types';
 
 export function FieldSettings() {
   const selectedFieldId = useBuilderStore((state) => state.selectedFieldId);
@@ -90,7 +96,7 @@ export function FieldSettings() {
           </>
         )}
 
-        {(field.type === 'radio' || field.type === 'checkbox') && (
+        {(field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown') && (
           <>
             <Separator />
             <div className="space-y-2">
@@ -140,6 +146,108 @@ export function FieldSettings() {
           </>
         )}
 
+        {field.type === 'number' && (
+          <>
+            <Separator />
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label htmlFor="min">Min Value</Label>
+                  <Input
+                    id="min"
+                    type="number"
+                    value={field.config.min || ''}
+                    onChange={(e) =>
+                      handleUpdate({
+                        config: {
+                          ...field.config,
+                          min: e.target.value ? Number(e.target.value) : undefined,
+                        },
+                      })
+                    }
+                    placeholder="Min"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="max">Max Value</Label>
+                  <Input
+                    id="max"
+                    type="number"
+                    value={field.config.max || ''}
+                    onChange={(e) =>
+                      handleUpdate({
+                        config: {
+                          ...field.config,
+                          max: e.target.value ? Number(e.target.value) : undefined,
+                        },
+                      })
+                    }
+                    placeholder="Max"
+                  />
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {field.type === 'rating' && (
+          <>
+            <Separator />
+            <div className="space-y-2">
+              <Label htmlFor="maxRating">Max Rating</Label>
+              <Input
+                id="maxRating"
+                type="number"
+                value={field.config.maxRating || 5}
+                onChange={(e) =>
+                  handleUpdate({
+                    config: {
+                      ...field.config,
+                      maxRating: e.target.value ? Number(e.target.value) : 5,
+                    },
+                  })
+                }
+                min={1}
+                max={10}
+              />
+            </div>
+          </>
+        )}
+
+        {field.type === 'file' && (
+          <>
+            <Separator />
+            <div className="space-y-2">
+              <Label htmlFor="fileTypes">Allowed File Types</Label>
+              <Input
+                id="fileTypes"
+                value={field.config.fileTypes || ''}
+                onChange={(e) =>
+                  handleUpdate({
+                    config: { ...field.config, fileTypes: e.target.value },
+                  })
+                }
+                placeholder="e.g., .pdf,.doc,.docx (leave empty for all)"
+              />
+              <Label htmlFor="maxFileSize">Max File Size (MB)</Label>
+              <Input
+                id="maxFileSize"
+                type="number"
+                value={field.config.maxFileSize || ''}
+                onChange={(e) =>
+                  handleUpdate({
+                    config: {
+                      ...field.config,
+                      maxFileSize: e.target.value ? Number(e.target.value) : undefined,
+                    },
+                  })
+                }
+                placeholder="Max size in MB"
+              />
+            </div>
+          </>
+        )}
+
         {field.type === 'longtext' && (
           <div className="space-y-2">
             <Label htmlFor="helpText">Help Text</Label>
@@ -155,6 +263,137 @@ export function FieldSettings() {
               rows={2}
             />
           </div>
+        )}
+
+        {field.type !== 'divider' && (
+          <>
+            <Separator />
+            <div className="space-y-2">
+              <Label>Conditional Logic</Label>
+              <p className="text-xs text-gray-500">
+                Show this field only when a condition is met
+              </p>
+              {field.config.condition ? (
+                <div className="space-y-2 rounded border p-3 bg-white">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Condition Active</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        handleUpdate({
+                          config: { ...field.config, condition: undefined },
+                        })
+                      }
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    <div>
+                      <Label className="text-xs">When field</Label>
+                      <select
+                        className="w-full mt-1 px-3 py-2 text-sm border rounded-md"
+                        value={field.config.condition.fieldId}
+                        onChange={(e) =>
+                          handleUpdate({
+                            config: {
+                              ...field.config,
+                              condition: {
+                                ...field.config.condition!,
+                                fieldId: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                      >
+                        <option value="">Select field...</option>
+                        {fields
+                          .filter((f) => f.id !== field.id && f.order < field.order)
+                          .map((f) => (
+                            <option key={f.id} value={f.id}>
+                              {f.label}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                    <div>
+                      <Label className="text-xs">Operator</Label>
+                      <select
+                        className="w-full mt-1 px-3 py-2 text-sm border rounded-md"
+                        value={field.config.condition.operator}
+                        onChange={(e) =>
+                          handleUpdate({
+                            config: {
+                              ...field.config,
+                              condition: {
+                                ...field.config.condition!,
+                                operator: e.target.value as ConditionOperator,
+                              },
+                            },
+                          })
+                        }
+                      >
+                        <option value="equals">equals</option>
+                        <option value="not_equals">not equals</option>
+                        <option value="contains">contains</option>
+                        <option value="not_contains">not contains</option>
+                        <option value="greater_than">greater than</option>
+                        <option value="less_than">less than</option>
+                        <option value="is_empty">is empty</option>
+                        <option value="is_not_empty">is not empty</option>
+                      </select>
+                    </div>
+                    {!['is_empty', 'is_not_empty'].includes(
+                      field.config.condition.operator
+                    ) && (
+                      <div>
+                        <Label className="text-xs">Value</Label>
+                        <Input
+                          className="mt-1"
+                          value={field.config.condition.value || ''}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            handleUpdate({
+                              config: {
+                                ...field.config,
+                                condition: {
+                                  ...field.config.condition!,
+                                  value: isNaN(Number(value)) ? value : Number(value),
+                                },
+                              },
+                            });
+                          }}
+                          placeholder="Value to compare"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    handleUpdate({
+                      config: {
+                        ...field.config,
+                        condition: {
+                          fieldId: '',
+                          operator: 'equals',
+                          value: '',
+                        },
+                      },
+                    })
+                  }
+                  className="w-full"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Condition
+                </Button>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

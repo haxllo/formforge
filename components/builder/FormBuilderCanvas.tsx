@@ -136,6 +136,66 @@ function FieldPreview({ field }: { field: FormField }) {
           ))}
         </RadioGroup>
       );
+    case 'number':
+      return (
+        <Input
+          type="number"
+          placeholder={field.config.placeholder || 'Enter number...'}
+          disabled
+          className="bg-gray-50"
+        />
+      );
+    case 'date':
+      return (
+        <Input
+          type="date"
+          disabled
+          className="bg-gray-50"
+        />
+      );
+    case 'phone':
+      return (
+        <Input
+          type="tel"
+          placeholder={field.config.placeholder || '+1 (555) 000-0000'}
+          disabled
+          className="bg-gray-50"
+        />
+      );
+    case 'url':
+      return (
+        <Input
+          type="url"
+          placeholder={field.config.placeholder || 'https://example.com'}
+          disabled
+          className="bg-gray-50"
+        />
+      );
+    case 'dropdown':
+      return (
+        <select disabled className="w-full px-3 py-2 border rounded-md bg-gray-50">
+          <option>Select an option...</option>
+          {(field.config.options || []).slice(0, 3).map((option, index) => (
+            <option key={index}>{option}</option>
+          ))}
+        </select>
+      );
+    case 'rating':
+      return (
+        <div className="flex gap-2">
+          {Array.from({ length: field.config?.maxRating || 5 }, (_, i) => (
+            <span key={i} className="text-2xl text-gray-300">★</span>
+          ))}
+        </div>
+      );
+    case 'file':
+      return (
+        <Input
+          type="file"
+          disabled
+          className="bg-gray-50"
+        />
+      );
     case 'divider':
       return <Separator />;
     default:
@@ -190,6 +250,9 @@ export function FormBuilderCanvas({ formId }: FormBuilderCanvasProps) {
           settings: {
             thankYouMessage: state.formSettings.thankYouMessage,
             redirectUrl: state.formSettings.redirectUrl,
+            webhookUrl: state.formSettings.webhookUrl,
+            webhookEnabled: state.formSettings.webhookEnabled,
+            enableHoneypot: state.formSettings.enableHoneypot,
           },
         }),
       });

@@ -4,16 +4,23 @@ import { useBuilderStore } from '@/lib/store/builder-store';
 import { FIELD_TYPES } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Type, FileText, Mail, CheckSquare, Circle, Minus } from 'lucide-react';
+import { Type, FileText, Mail, CheckSquare, Circle, Minus, Hash, Calendar, Upload, List, Star, Phone, Link } from 'lucide-react';
 import type { FieldType } from '@/lib/types';
 
-const iconMap = {
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Type,
   FileText,
   Mail,
   CheckSquare,
   Circle,
   Minus,
+  Hash,
+  Calendar,
+  Upload,
+  List,
+  Star,
+  Phone,
+  Link,
 };
 
 export function FieldPalette() {

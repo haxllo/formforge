@@ -6,9 +6,10 @@ import { FieldPalette } from './FieldPalette';
 import { FormBuilderCanvas } from './FormBuilderCanvas';
 import { FieldSettings } from './FieldSettings';
 import { FormSettings } from './FormSettings';
+import { TextBuilder } from './TextBuilder';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Settings } from 'lucide-react';
+import { Settings, Type, Layout } from 'lucide-react';
 import type { Form, FormFieldDB } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 
@@ -21,6 +22,7 @@ interface BuilderClientProps {
 export function BuilderClient({ formId, initialForm, initialFields }: BuilderClientProps) {
   const router = useRouter();
   const [showFormSettings, setShowFormSettings] = useState(false);
+  const [builderMode, setBuilderMode] = useState<'visual' | 'text'>('visual');
   const setFields = useBuilderStore((state) => state.setFields);
   const setFormTitle = useBuilderStore((state) => state.setFormTitle);
   const setFormDescription = useBuilderStore((state) => state.setFormDescription);
@@ -53,6 +55,8 @@ export function BuilderClient({ formId, initialForm, initialFields }: BuilderCli
     setFormSettings({
       thankYouMessage: initialForm.settings?.thankYouMessage as string | undefined,
       redirectUrl: initialForm.settings?.redirectUrl as string | undefined,
+      webhookUrl: initialForm.settings?.webhookUrl as string | undefined,
+      webhookEnabled: initialForm.settings?.webhookEnabled as boolean | undefined,
     });
     markSaved();
   }, [formId]);
@@ -76,9 +80,35 @@ export function BuilderClient({ formId, initialForm, initialFields }: BuilderCli
 
   return (
     <div className="flex h-[calc(100vh-4rem)]">
-      {/* Left Sidebar - Field Palette */}
-      <div className="w-64 flex-shrink-0">
-        <FieldPalette />
+      {/* Left Sidebar - Field Palette or Text Builder */}
+      <div className="w-64 flex-shrink-0 flex flex-col border-r">
+        <div className="flex border-b bg-white">
+          <Button
+            variant={builderMode === 'visual' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setBuilderMode('visual')}
+            className="flex-1 rounded-none"
+          >
+            <Layout className="h-4 w-4 mr-2" />
+            Visual
+          </Button>
+          <Button
+            variant={builderMode === 'text' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setBuilderMode('text')}
+            className="flex-1 rounded-none"
+          >
+            <Type className="h-4 w-4 mr-2" />
+            Text
+          </Button>
+        </div>
+        <div className="flex-1 overflow-hidden">
+          {builderMode === 'visual' ? (
+            <FieldPalette />
+          ) : (
+            <TextBuilder formId={formId} />
+          )}
+        </div>
       </div>
 
       {/* Center - Canvas */}

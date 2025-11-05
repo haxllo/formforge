@@ -32,7 +32,7 @@ export default function NewFormPage() {
 
       const form = await response.json();
       toast.success('Form created successfully');
-      router.push(`/dashboard/forms/${form.id}/builder`);
+      router.push(`/forms/${form.id}/builder`);
     } catch (error) {
       toast.error('Failed to create form');
     } finally {

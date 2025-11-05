@@ -8,7 +8,31 @@ export const fieldTypeSchema = z.enum([
   'checkbox',
   'radio',
   'divider',
+  'number',
+  'date',
+  'file',
+  'dropdown',
+  'rating',
+  'phone',
+  'url',
 ]);
+
+const conditionOperatorSchema = z.enum([
+  'equals',
+  'not_equals',
+  'contains',
+  'not_contains',
+  'greater_than',
+  'less_than',
+  'is_empty',
+  'is_not_empty',
+]);
+
+const fieldConditionSchema = z.object({
+  fieldId: z.string(),
+  operator: conditionOperatorSchema,
+  value: z.union([z.string(), z.number()]).optional(),
+}).optional();
 
 export const formFieldSchema = z.object({
   id: z.string(),
@@ -24,6 +48,7 @@ export const formFieldSchema = z.object({
     maxLength: z.number().int().min(1).optional(),
     pattern: z.string().optional(),
     helpText: z.string().max(500).optional(),
+    condition: fieldConditionSchema,
   }).default({ required: false }),
 });
 

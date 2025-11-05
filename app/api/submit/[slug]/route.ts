@@ -47,7 +47,7 @@ export async function POST(
     // Fetch form by slug
     const { data: form, error: formError } = await supabase
       .from('forms')
-      .select('id, status')
+      .select('id, status, settings')
       .eq('slug', slug)
       .single();
 
@@ -72,6 +72,19 @@ export async function POST(
 
     // Validate submission data
     const body = await request.json();
+    
+    // Check honeypot field (spam protection)
+    const formSettings = (form.settings || {}) as {
+      enableHoneypot?: boolean;
+    };
+    if (formSettings.enableHoneypot && body.website) {
+      // Honeypot field filled - likely spam
+      return NextResponse.json({ error: 'Invalid submission' }, { status: 400 });
+    }
+    
+    // Remove honeypot field from body
+    delete body.website;
+    
     const schema = createSubmissionSchema(fields);
 
     try {
@@ -104,6 +117,33 @@ export async function POST(
       if (insertError) {
         logError(insertError, 'POST /api/submit/[slug]');
         return NextResponse.json({ error: 'Failed to submit form' }, { status: 500 });
+      }
+
+      // Send webhook if enabled
+      const formSettings = (form.settings || {}) as {
+        webhookUrl?: string;
+        webhookEnabled?: boolean;
+      };
+
+      if (formSettings.webhookEnabled && formSettings.webhookUrl) {
+        // Send webhook asynchronously (don't wait for response)
+        fetch(formSettings.webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'FormForge-Webhook/1.0',
+          },
+          body: JSON.stringify({
+            event: 'form.submission',
+            formId: form.id,
+            submissionId: submission.id,
+            data: sanitizedData,
+            submittedAt: new Date().toISOString(),
+          }),
+        }).catch((error) => {
+          // Log webhook errors but don't fail the submission
+          logError(error, 'Webhook delivery failed');
+        });
       }
 
       return NextResponse.json({
