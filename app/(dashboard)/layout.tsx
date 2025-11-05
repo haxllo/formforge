@@ -7,7 +7,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClientSupabase();
+  const supabase = await createClientSupabase();
   const {
     data: { user },
   } = await supabase.auth.getUser();

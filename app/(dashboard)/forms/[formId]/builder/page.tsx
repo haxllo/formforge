@@ -9,7 +9,7 @@ interface BuilderPageProps {
 
 export default async function BuilderPage({ params }: BuilderPageProps) {
   const { formId } = await params;
-  const supabase = createClientSupabase();
+  const supabase = await createClientSupabase();
   const {
     data: { user },
   } = await supabase.auth.getUser();

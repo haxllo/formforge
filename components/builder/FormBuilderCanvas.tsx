@@ -179,17 +179,26 @@ export function FormBuilderCanvas({ formId }: FormBuilderCanvasProps) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      const state = useBuilderStore.getState();
       const response = await fetch(`/api/forms/${formId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields }),
+        body: JSON.stringify({
+          fields: state.fields,
+          title: state.formTitle,
+          description: state.formDescription,
+          settings: {
+            thankYouMessage: state.formSettings.thankYouMessage,
+            redirectUrl: state.formSettings.redirectUrl,
+          },
+        }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to save');
       }
 
-      useBuilderStore.getState().markSaved();
+      state.markSaved();
       toast.success('Form saved successfully');
     } catch (error) {
       toast.error('Failed to save form');
@@ -207,6 +216,7 @@ export function FormBuilderCanvas({ formId }: FormBuilderCanvasProps) {
     }, 2000);
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fields, hasUnsavedChanges]);
 
   return (
@@ -240,7 +250,7 @@ export function FormBuilderCanvas({ formId }: FormBuilderCanvasProps) {
             </span>
           )}
         </div>
-        <Button onClick={handleSave} disabled={isSaving || !hasUnsavedChanges}>
+        <Button onClick={handleSave} disabled={isSaving || !hasUnsavedChanges} data-save-button>
           <Save className="h-4 w-4 mr-2" />
           {isSaving ? 'Saving...' : 'Save'}
         </Button>

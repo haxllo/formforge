@@ -12,7 +12,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClientSupabase();
+    const supabase = await createClientSupabase();
     const {
       data: { user },
       error: authError,
@@ -61,7 +61,7 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClientSupabase();
+    const supabase = await createClientSupabase();
     const {
       data: { user },
       error: authError,
@@ -101,7 +101,17 @@ export async function PUT(
         updateData.status = validated.status;
       }
       if (validated.settings) {
-        updateData.settings = validated.settings;
+        // Merge with existing settings to preserve other fields
+        const { data: currentForm } = await supabase
+          .from('forms')
+          .select('settings')
+          .eq('id', id)
+          .single();
+        
+        updateData.settings = {
+          ...(currentForm?.settings || {}),
+          ...validated.settings,
+        };
       }
 
       if (Object.keys(updateData).length > 0) {
@@ -169,7 +179,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClientSupabase();
+    const supabase = await createClientSupabase();
     const {
       data: { user },
       error: authError,

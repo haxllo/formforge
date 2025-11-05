@@ -6,7 +6,7 @@ import Link from 'next/link';
 import type { Form } from '@/lib/types';
 
 export default async function DashboardPage() {
-  const supabase = createClientSupabase();
+  const supabase = await createClientSupabase();
   const {
     data: { user },
   } = await supabase.auth.getUser();

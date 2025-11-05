@@ -42,7 +42,7 @@ export async function POST(
       );
     }
 
-    const supabase = createClientSupabase();
+    const supabase = await createClientSupabase();
 
     // Fetch form by slug
     const { data: form, error: formError } = await supabase

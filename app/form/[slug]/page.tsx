@@ -9,7 +9,7 @@ interface FormPageProps {
 
 export default async function FormPage({ params }: FormPageProps) {
   const { slug } = await params;
-  const supabase = createClientSupabase();
+  const supabase = await createClientSupabase();
 
   // Fetch form by slug
   const { data: form, error: formError } = await supabase

@@ -7,7 +7,7 @@ export default async function SignInPage({
 }: {
   searchParams: { redirect?: string };
 }) {
-  const supabase = createClientSupabase();
+  const supabase = await createClientSupabase();
   const {
     data: { user },
   } = await supabase.auth.getUser();

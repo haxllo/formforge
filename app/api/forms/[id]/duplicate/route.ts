@@ -10,7 +10,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClientSupabase();
+    const supabase = await createClientSupabase();
     const {
       data: { user },
       error: authError,

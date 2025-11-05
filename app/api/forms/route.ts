@@ -7,7 +7,7 @@ import { logError } from '@/lib/utils/logger';
 
 export async function GET() {
   try {
-    const supabase = createClientSupabase();
+    const supabase = await createClientSupabase();
     const {
       data: { user },
       error: authError,
@@ -37,7 +37,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClientSupabase();
+    const supabase = await createClientSupabase();
     const {
       data: { user },
       error: authError,

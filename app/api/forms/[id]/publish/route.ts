@@ -8,7 +8,7 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const supabase = createClientSupabase();
+    const supabase = await createClientSupabase();
     const {
       data: { user },
       error: authError,
