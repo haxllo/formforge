@@ -35,8 +35,8 @@ export default async function BuilderPage({ params }: BuilderPageProps) {
     redirect('/dashboard');
   }
 
-  const fields: FormFieldDB[] = (formData.form_fields || []).sort(
-    (a, b) => a.field_order - b.field_order
+  const fields: FormFieldDB[] = ((formData.form_fields || []) as FormFieldDB[]).sort(
+    (a: FormFieldDB, b: FormFieldDB) => a.field_order - b.field_order
   );
 
   return (

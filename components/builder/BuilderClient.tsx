@@ -37,17 +37,19 @@ export function BuilderClient({ formId, initialForm, initialFields }: BuilderCli
       label: field.label,
       order: field.field_order,
       config: {
+        ...field.config,
         required: field.is_required,
         placeholder: field.placeholder || undefined,
         options: field.config?.options || undefined,
         helpText: field.config?.helpText || undefined,
-        ...field.config,
       },
     }));
 
     setFields(fields);
     setFormTitle(initialForm.title);
-    setFormDescription(initialForm.description);
+    if (initialForm.description) {
+      setFormDescription(initialForm.description);
+    }
     setFormSettings({
       thankYouMessage: initialForm.settings?.thankYouMessage as string | undefined,
       redirectUrl: initialForm.settings?.redirectUrl as string | undefined,

@@ -142,19 +142,21 @@ export function PublicFormRenderer({ form, fields }: PublicFormRendererProps) {
               <div className="space-y-2">
                 {(field.config?.options || []).map((option, index) => {
                   const optionKey = `${fieldKey}_${index}`;
+                  const currentValue = watch(fieldKey);
+                  const valueArray = Array.isArray(currentValue) ? currentValue : [];
+                  const isChecked = valueArray.includes(option);
                   return (
                     <div key={index} className="flex items-center space-x-2">
                       <Checkbox
                         id={optionKey}
-                        checked={watch(fieldKey)?.includes(option) || false}
+                        checked={isChecked}
                         onCheckedChange={(checked) => {
-                          const current = watch(fieldKey) || [];
                           if (checked) {
-                            setValue(fieldKey, [...current, option]);
+                            setValue(fieldKey, [...valueArray, option]);
                           } else {
                             setValue(
                               fieldKey,
-                              current.filter((v: string) => v !== option)
+                              valueArray.filter((v: string) => v !== option)
                             );
                           }
                         }}

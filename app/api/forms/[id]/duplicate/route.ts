@@ -69,7 +69,7 @@ export async function POST(
         form_id: newForm.id,
         field_type: field.field_type,
         label: sanitizeText(field.label),
-        placeholder: field.placeholder ? sanitizeText(field.placeholder) : null,
+        placeholder: field.placeholder ? sanitizeText(field.placeholder) : undefined,
         is_required: field.is_required,
         field_order: field.field_order,
         config: field.config,

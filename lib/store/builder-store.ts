@@ -23,7 +23,7 @@ interface BuilderState {
   reorderFields: (startIndex: number, endIndex: number) => void;
   selectField: (id: string | null) => void;
   setFormTitle: (title: string) => void;
-  setFormDescription: (description: string) => void;
+  setFormDescription: (description: string | undefined) => void;
   setFormSettings: (settings: Partial<BuilderState['formSettings']>) => void;
   togglePreviewMode: () => void;
   markSaved: () => void;

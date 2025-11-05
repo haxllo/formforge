@@ -29,7 +29,12 @@ export function createSubmissionSchema(fields: FormFieldDB[]) {
     }
 
     if (field.is_required && field.field_type !== 'checkbox') {
-      fieldSchema = fieldSchema.refine((val) => val && val.length > 0, {
+      fieldSchema = fieldSchema.refine((val) => {
+        if (typeof val === 'string') {
+          return val.length > 0;
+        }
+        return val !== null && val !== undefined;
+      }, {
         message: `${field.label} is required`,
       });
     }

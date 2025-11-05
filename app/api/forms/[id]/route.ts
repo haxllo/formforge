@@ -146,7 +146,7 @@ export async function PUT(
           form_id: id,
           field_type: field.type,
           label: sanitizeText(field.label),
-          placeholder: field.config.placeholder ? sanitizeText(field.config.placeholder) : null,
+          placeholder: field.config.placeholder ? sanitizeText(field.config.placeholder) : undefined,
           is_required: field.config.required || false,
           field_order: field.order,
           config: field.config,
