@@ -7,9 +7,29 @@ export async function GET(request: Request) {
   const redirectTo = requestUrl.searchParams.get('redirect') || '/dashboard';
 
   if (code) {
-    const supabase = await createClientSupabase();
-    await supabase.auth.exchangeCodeForSession(code);
+    try {
+      const supabase = await createClientSupabase();
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      
+      if (error) {
+        console.error('Error exchanging code for session:', error);
+        // Redirect to sign-in with error message if exchange fails
+        const signInUrl = new URL('/sign-in', requestUrl.origin);
+        signInUrl.searchParams.set('error', 'invalid_code');
+        return NextResponse.redirect(signInUrl);
+      }
+    } catch (error) {
+      console.error('Error in auth callback:', error);
+      // Redirect to sign-in on error
+      const signInUrl = new URL('/sign-in', requestUrl.origin);
+      return NextResponse.redirect(signInUrl);
+    }
   }
 
-  return NextResponse.redirect(new URL(redirectTo, requestUrl.origin));
+  // Construct redirect URL - ensure it's a valid path
+  const redirectUrl = redirectTo.startsWith('/') 
+    ? new URL(redirectTo, requestUrl.origin)
+    : new URL(`/${redirectTo}`, requestUrl.origin);
+    
+  return NextResponse.redirect(redirectUrl);
 }
