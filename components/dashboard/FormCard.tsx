@@ -175,7 +175,7 @@ export function FormCard({ form, submissionCount }: FormCardProps) {
           <DialogHeader>
             <DialogTitle>Delete Form</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{form.title}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{form.title}&quot;? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
+import { FORM_THEMES } from '@/lib/themes';
+import type { FormTheme, FormLayout } from '@/lib/types';
 
 export function FormSettings() {
   const formTitle = useBuilderStore((state) => state.formTitle);
@@ -99,6 +101,68 @@ export function FormSettings() {
               </p>
             </div>
           )}
+        </div>
+
+        <Separator />
+
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold">Form Appearance</Label>
+          
+          <div className="space-y-2">
+            <Label htmlFor="theme">Theme</Label>
+            <select
+              id="theme"
+              value={formSettings.theme || 'default'}
+              onChange={(e) => setFormSettings({ theme: e.target.value as FormTheme })}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            >
+              {Object.keys(FORM_THEMES).map((theme) => (
+                <option key={theme} value={theme}>
+                  {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="layout">Layout</Label>
+            <select
+              id="layout"
+              value={formSettings.layout || 'single'}
+              onChange={(e) => setFormSettings({ layout: e.target.value as FormLayout })}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            >
+              <option value="single">Single Column</option>
+              <option value="two-column">Two Columns</option>
+              <option value="card">Card Style</option>
+            </select>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="progress-bar"
+              checked={formSettings.showProgressBar || false}
+              onCheckedChange={(checked) =>
+                setFormSettings({ showProgressBar: checked === true })
+              }
+            />
+            <Label htmlFor="progress-bar" className="cursor-pointer">
+              Show Progress Bar
+            </Label>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="remove-branding"
+              checked={formSettings.removeBranding || false}
+              onCheckedChange={(checked) =>
+                setFormSettings({ removeBranding: checked === true })
+              }
+            />
+            <Label htmlFor="remove-branding" className="cursor-pointer">
+              Remove FormForge Branding (Pro)
+            </Label>
+          </div>
         </div>
 
         <Separator />

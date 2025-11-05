@@ -137,7 +137,7 @@ export function TextBuilder({ formId }: TextBuilderProps) {
               <li><code>/text</code> or <code>/email</code> - Field types</li>
               <li><code>*</code> - Required field</li>
               <li><code>-</code> - Divider</li>
-              <li><code>?</code> - Options (e.g., "Question? Option 1, Option 2")</li>
+              <li><code>?</code> - Options (e.g., &quot;Question? Option 1, Option 2&quot;)</li>
             </ul>
           </div>
         </div>

@@ -198,6 +198,74 @@ function FieldPreview({ field }: { field: FormField }) {
       );
     case 'divider':
       return <Separator />;
+    case 'matrix':
+      return (
+        <div className="overflow-x-auto text-sm">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr>
+                <th className="border p-2"></th>
+                {(field.config?.columns as string[] || ['Col 1']).map((col, i) => (
+                  <th key={i} className="border p-2 text-xs">{col}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {(field.config?.rows as string[] || ['Row 1']).map((row, i) => (
+                <tr key={i}>
+                  <td className="border p-2 text-xs">{row}</td>
+                  {(field.config?.columns as string[] || ['Col 1']).map((_, j) => (
+                    <td key={j} className="border p-2 text-center">
+                      <input type="radio" disabled className="h-3 w-3" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    case 'ranking':
+      return (
+        <div className="space-y-2">
+          <p className="text-xs text-gray-500 mb-2">Drag to reorder</p>
+          {(field.config?.options as string[] || ['Option 1', 'Option 2']).map((option, i) => (
+            <div key={i} className="flex items-center gap-2 p-2 border rounded bg-gray-50 text-sm">
+              <span className="text-gray-400">☰</span>
+              <span className="font-medium">{i + 1}.</span>
+              <span>{option}</span>
+            </div>
+          ))}
+        </div>
+      );
+    case 'picture_choice':
+      return (
+        <div className="grid grid-cols-2 gap-2">
+          {(field.config?.imageUrls as string[] || []).slice(0, 4).map((url, i) => (
+            <div key={i} className="border rounded overflow-hidden">
+              <div className="h-20 bg-gray-200 flex items-center justify-center text-xs text-gray-400">
+                Image
+              </div>
+              <div className="p-1 text-xs text-center">{(field.config?.options as string[])?.[i] || 'Option'}</div>
+            </div>
+          ))}
+        </div>
+      );
+    case 'signature':
+      return (
+        <div className="border-2 border-dashed rounded-md p-4 bg-gray-50">
+          <div className="h-24 bg-white border rounded flex items-center justify-center text-sm text-gray-400">
+            Signature pad
+          </div>
+          <button className="mt-2 text-xs text-gray-600" disabled>Clear</button>
+        </div>
+      );
+    case 'page_break':
+      return (
+        <div className="border-t-2 border-gray-300 py-4 text-center">
+          <span className="text-sm text-gray-500">Page Break</span>
+        </div>
+      );
     default:
       return null;
   }

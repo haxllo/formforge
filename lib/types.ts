@@ -12,6 +12,20 @@ export interface Form {
   settings: FormSettings;
 }
 
+export type FormTheme = 'default' | 'minimal' | 'modern' | 'playful' | 'professional' | 'custom';
+
+export type FormLayout = 'single' | 'two-column' | 'card';
+
+export interface ThemeConfig {
+  primaryColor?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  fontFamily?: string;
+  buttonStyle?: 'rounded' | 'square' | 'pill';
+  backgroundImage?: string;
+  customCSS?: string;
+}
+
 export interface FormSettings {
   thankYouMessage?: string;
   redirectUrl?: string;
@@ -21,6 +35,13 @@ export interface FormSettings {
   enableHoneypot?: boolean;
   recaptchaEnabled?: boolean;
   recaptchaSiteKey?: string;
+  theme?: FormTheme;
+  themeConfig?: ThemeConfig;
+  layout?: FormLayout;
+  showProgressBar?: boolean;
+  removeBranding?: boolean;
+  customDomain?: string;
+  logoUrl?: string;
   [key: string]: unknown;
 }
 
@@ -37,7 +58,12 @@ export type FieldType =
   | 'dropdown'
   | 'rating'
   | 'phone'
-  | 'url';
+  | 'url'
+  | 'matrix'
+  | 'ranking'
+  | 'picture_choice'
+  | 'signature'
+  | 'page_break';
 
 export type ConditionOperator = 'equals' | 'not_equals' | 'contains' | 'not_contains' | 'greater_than' | 'less_than' | 'is_empty' | 'is_not_empty';
 

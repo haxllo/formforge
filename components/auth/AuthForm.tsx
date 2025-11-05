@@ -80,7 +80,7 @@ export function AuthForm({ redirectTo, error, errorDescription }: AuthFormProps)
         <div>
           <h3 className="text-lg font-semibold">Check your email</h3>
           <p className="mt-2 text-sm text-gray-600">
-            We've sent a magic link to <strong>{email}</strong>
+            We&apos;ve sent a magic link to <strong>{email}</strong>
           </p>
           <p className="mt-1 text-sm text-gray-500">
             Click the link in the email to sign in
@@ -126,7 +126,7 @@ export function AuthForm({ redirectTo, error, errorDescription }: AuthFormProps)
         )}
       </Button>
       <p className="text-center text-xs text-gray-500">
-        We'll send you a secure link to sign in without a password
+        We&apos;ll send you a secure link to sign in without a password
       </p>
     </form>
   );

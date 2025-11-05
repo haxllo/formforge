@@ -1,17 +1,54 @@
 # FormForge
 
-A modern, intuitive, zero-code form builder SaaS built with Next.js 16, TypeScript, Tailwind CSS, and Supabase.
+A modern, powerful, zero-code form builder SaaS built with Next.js 16, TypeScript, Tailwind CSS, and Supabase. The Tally.so alternative with advanced features.
 
-## Features
+## ✨ Features
 
-- 🎨 Drag-and-drop form builder
-- 📝 Multiple field types (text, email, long text, checkbox, radio, divider)
-- 🔒 Secure authentication with Supabase
-- 📊 View and manage form submissions
-- 🔗 Share forms via unique slugs
-- 💾 Auto-save functionality
-- 📤 CSV export for submissions
-- ⚡ Built with Next.js 16 and React 19
+### Form Builder
+- 🎨 **Intuitive drag-and-drop interface** with categorized field palette
+- 🎯 **18+ field types**: text, email, number, phone, URL, date, long text, checkbox, radio, dropdown, rating, matrix, ranking, picture choice, signature, file upload, dividers, and page breaks
+- 📋 **Conditional logic**: Show/hide fields based on user responses
+- 🔄 **Field duplication and reordering**
+- 💾 **Auto-save** with keyboard shortcuts (Cmd/Ctrl+S)
+- 🎨 **Visual and text editing modes**
+
+### Theming & Customization
+- 🎨 **5 pre-built themes**: Default, Minimal, Modern, Playful, Professional
+- 🖌️ **Custom theming**: Colors, fonts, button styles, backgrounds
+- 📐 **Multiple layouts**: Single column, two-column, card style
+- 🖼️ **Logo upload and branding control**
+- 🎨 **Custom CSS support**
+- 📊 **Progress bar option**
+
+### Advanced Field Types
+- 📊 **Matrix questions**: Multi-dimensional rating scales
+- 🔢 **Ranking**: Drag-to-order preference lists
+- 🖼️ **Picture choice**: Image-based selections
+- ✍️ **Signature capture**: Electronic signatures
+- 📄 **Page breaks**: Multi-page forms
+
+### Form Management
+- 🔒 **Secure authentication** with Supabase
+- 📊 **Submission management** with search and filters
+- 📤 **CSV export** for data analysis
+- 🔗 **Share forms** via unique slugs
+- 🌐 **Public form publishing**
+- 🎯 **Form status** (draft/published)
+
+### Security & Anti-Spam
+- 🛡️ **Honeypot protection**
+- ⏱️ **Rate limiting** (10 submissions/hour per IP)
+- 🔐 **Row Level Security (RLS)**
+- 🍯 **Bot detection**
+
+### Developer Experience
+- ⚡ **Built with Next.js 16** and React 19
+- 📱 **Fully responsive design**
+- 🎯 **TypeScript** for type safety
+- 🎨 **Tailwind CSS** + Shadcn/ui components
+- 📦 **Zustand** for state management
+- ✅ **Zod** for validation
+- 🔄 **ISR** (Incremental Static Regeneration) for performance
 
 ## Tech Stack
 

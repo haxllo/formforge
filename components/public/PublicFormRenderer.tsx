@@ -14,6 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Form, FormFieldDB, FieldCondition } from '@/lib/types';
+import { getThemeStyles } from '@/lib/themes';
 
 interface PublicFormRendererProps {
   form: Form;
@@ -60,7 +61,19 @@ export function PublicFormRenderer({ form, fields }: PublicFormRendererProps) {
   const formSettings = (form.settings || {}) as {
     thankYouMessage?: string;
     redirectUrl?: string;
+    theme?: string;
+    themeConfig?: Record<string, unknown>;
+    layout?: string;
+    showProgressBar?: boolean;
+    removeBranding?: boolean;
+    logoUrl?: string;
   };
+
+  // Generate theme styles (not used in component but could be exported)
+  // const themeStyles = getThemeStyles(
+  //   formSettings.theme || 'default',
+  //   formSettings.themeConfig as Record<string, unknown>
+  // );
 
   const {
     register,
@@ -74,14 +87,6 @@ export function PublicFormRenderer({ form, fields }: PublicFormRendererProps) {
 
   // Watch all form values to evaluate conditions
   const formValues = watch();
-  
-  // Filter visible fields based on conditions
-  const visibleFields = useMemo(() => {
-    return fields.filter((field) => {
-      if (!field.config?.condition) return true;
-      return evaluateCondition(field.config.condition, formValues, fields);
-    });
-  }, [fields, formValues]);
 
   const onSubmit = async (data: Record<string, unknown>) => {
     setIsSubmitting(true);
@@ -149,7 +154,7 @@ export function PublicFormRenderer({ form, fields }: PublicFormRendererProps) {
           aria-hidden="true"
         />
       )}
-      {fields.map((field) => {
+      {fields.map((field, index) => {
         // Check if field should be visible based on conditions
         const isVisible = !field.config?.condition || 
           evaluateCondition(field.config.condition, formValues, fields);
@@ -157,6 +162,13 @@ export function PublicFormRenderer({ form, fields }: PublicFormRendererProps) {
         if (!isVisible) return null;
         if (field.field_type === 'divider') {
           return <Separator key={field.id} className="my-6" />;
+        }
+        if (field.field_type === 'page_break') {
+          return (
+            <div key={field.id} className="border-t-2 border-gray-300 my-8 pt-8">
+              <div className="text-center text-sm text-gray-500">Page {index + 1}</div>
+            </div>
+          );
         }
 
         const fieldKey = field.label.toLowerCase().replace(/\s+/g, '_');
@@ -336,6 +348,102 @@ export function PublicFormRenderer({ form, fields }: PublicFormRendererProps) {
                 accept={typeof field.config?.fileTypes === 'string' ? field.config.fileTypes : '*'}
                 className={error ? 'border-red-500' : ''}
               />
+            )}
+
+            {field.field_type === 'matrix' && (
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="border p-2"></th>
+                      {(field.config?.columns as string[] || []).map((col, i) => (
+                        <th key={i} className="border p-2 text-sm font-medium">{col}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(field.config?.rows as string[] || []).map((row, rowIndex) => (
+                      <tr key={rowIndex}>
+                        <td className="border p-2 text-sm font-medium">{row}</td>
+                        {(field.config?.columns as string[] || []).map((col, colIndex) => (
+                          <td key={colIndex} className="border p-2 text-center">
+                            <input
+                              type="radio"
+                              {...register(`${fieldKey}_${rowIndex}`)}
+                              value={col}
+                              className="h-4 w-4"
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {field.field_type === 'ranking' && (
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600 mb-3">Drag to reorder by preference</p>
+                {(field.config?.options as string[] || []).map((option, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-3 border rounded-md bg-white hover:bg-gray-50 cursor-move"
+                  >
+                    <span className="text-gray-400">☰</span>
+                    <span className="font-medium">{index + 1}.</span>
+                    <span>{option}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {field.field_type === 'picture_choice' && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {(field.config?.imageUrls as string[] || []).map((imageUrl, index) => {
+                  const option = (field.config?.options as string[])?.[index] || '';
+                  const currentValue = watch(fieldKey);
+                  const isSelected = currentValue === option;
+                  return (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => setValue(fieldKey, option)}
+                      className={`relative rounded-lg overflow-hidden border-2 transition-all ${
+                        isSelected ? 'border-primary ring-2 ring-primary' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={imageUrl} alt={option} className="w-full h-32 object-cover" />
+                      <div className="p-2 text-sm font-medium">{option}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {field.field_type === 'signature' && (
+              <div>
+                <div className="border-2 border-dashed rounded-md p-4 bg-gray-50">
+                  <canvas
+                    id={fieldKey}
+                    className="w-full h-32 bg-white border rounded cursor-crosshair"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const canvas = document.getElementById(fieldKey) as HTMLCanvasElement;
+                      if (canvas) {
+                        const ctx = canvas.getContext('2d');
+                        ctx?.clearRect(0, 0, canvas.width, canvas.height);
+                      }
+                    }}
+                    className="mt-2 text-sm text-gray-600 hover:text-gray-800"
+                  >
+                    Clear signature
+                  </button>
+                </div>
+              </div>
             )}
 
             {error && (

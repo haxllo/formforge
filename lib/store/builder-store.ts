@@ -12,6 +12,10 @@ interface BuilderState {
     webhookUrl?: string;
     webhookEnabled?: boolean;
     enableHoneypot?: boolean;
+    theme?: string;
+    layout?: string;
+    showProgressBar?: boolean;
+    removeBranding?: boolean;
   };
   isPreviewMode: boolean;
   lastSaved: Date | null;
@@ -67,6 +71,17 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     }
     if (type === 'rating') {
       defaultConfig.maxRating = 5;
+    }
+    if (type === 'matrix') {
+      defaultConfig.rows = ['Row 1'];
+      defaultConfig.columns = ['Column 1'];
+    }
+    if (type === 'ranking') {
+      defaultConfig.options = ['Option 1', 'Option 2', 'Option 3'];
+    }
+    if (type === 'picture_choice') {
+      defaultConfig.options = [];
+      defaultConfig.imageUrls = [];
     }
     
     const newField: FormField = {
@@ -217,8 +232,18 @@ function getDefaultLabel(type: FieldType): string {
       return 'Dropdown';
     case 'rating':
       return 'Rating';
+    case 'matrix':
+      return 'Matrix Question';
+    case 'ranking':
+      return 'Ranking';
+    case 'picture_choice':
+      return 'Picture Choice';
+    case 'signature':
+      return 'Signature';
     case 'file':
       return 'File Upload';
+    case 'page_break':
+      return 'Page Break';
     case 'divider':
       return 'Divider';
     default:
