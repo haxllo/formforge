@@ -155,13 +155,13 @@ export function FormCard({ form, submissionCount }: FormCardProps) {
           </div>
         </CardContent>
         <CardFooter className="flex gap-2">
-          <Link href={`/dashboard/forms/${form.id}/builder`} className="flex-1">
+          <Link href={`/forms/${form.id}/builder`} className="flex-1">
             <Button variant="outline" className="w-full" size="sm">
               <Edit className="h-4 w-4 mr-2" />
               Edit
             </Button>
           </Link>
-          <Link href={`/dashboard/forms/${form.id}/submissions`} className="flex-1">
+          <Link href={`/forms/${form.id}/submissions`} className="flex-1">
             <Button variant="outline" className="w-full" size="sm">
               <FileText className="h-4 w-4 mr-2" />
               View
